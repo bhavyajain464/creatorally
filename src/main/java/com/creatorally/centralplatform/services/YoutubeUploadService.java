@@ -1,6 +1,6 @@
 package com.creatorally.centralplatform.services;
 
-import com.creatorally.centralplatform.requests.VideoUploadRequest;
+import com.creatorally.centralplatform.models.requests.VideoUploadRequest;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -20,7 +20,6 @@ import com.google.api.services.youtube.model.VideoStatus;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -32,8 +31,8 @@ public class YoutubeUploadService {
     private static final String APPLICATION_NAME = "YouTube Upload Service";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Arrays.asList(YouTubeScopes.YOUTUBE_UPLOAD);
-    private static final String CLIENT_SECRETS_FILE = "/Users/bhavyajain/Downloads/client_secrets.json";
-    private static final String CREDENTIALS_DIRECTORY = "oauth-credentials";
+    private static final String CLIENT_SECRETS_FILE = "src/main/resources/client_secrets.json";
+    private static final String CREDENTIALS_DIRECTORY = "C:/Users/Dell/OneDrive/Desktop/To-new-beginnings/oauth-credentials";
 
 
     @SneakyThrows

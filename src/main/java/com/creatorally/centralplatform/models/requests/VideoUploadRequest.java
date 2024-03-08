@@ -1,6 +1,7 @@
-package com.creatorally.centralplatform.requests;
+package com.creatorally.centralplatform.models.requests;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties
 public class VideoUploadRequest {
 
     @JsonProperty("file")
