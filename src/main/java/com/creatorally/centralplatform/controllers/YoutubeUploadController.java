@@ -22,8 +22,7 @@ public class YoutubeUploadController {
     }
 
     @PostMapping("/uploadVideo")
-    public String uploadVideo(
-            @RequestBody VideoUploadRequest videoUploadRequest) throws IOException {
+    public String uploadVideo(@RequestBody VideoUploadRequest videoUploadRequest) throws IOException {
         youtubeUploadService.uploadVideo(videoUploadRequest);
         return "Video uploaded successfully!";
     }
