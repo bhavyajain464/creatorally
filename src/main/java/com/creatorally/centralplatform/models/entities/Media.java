@@ -3,6 +3,7 @@ package com.creatorally.centralplatform.models.entities;
 import com.creatorally.centralplatform.models.enums.MediaType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +12,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Media {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Boolean isVerified;
+    private Boolean isVerified = false;
     private String editedUrl;
     private String uneditedUrl;
     private Integer editorId;
