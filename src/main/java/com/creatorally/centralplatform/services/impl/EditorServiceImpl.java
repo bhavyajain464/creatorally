@@ -39,7 +39,7 @@ public class EditorServiceImpl implements EditorService {
     public GetEditorResponse getEditorById(int id) {
         Optional<Editor> editorOp = editorRespository.findById(id);
         if(editorOp.isEmpty()){
-            throw new Exception("nhi hai bhaiya");
+            throw new Exception("No Editor exists");
         }
         Editor editor = editorOp.get();
         List<Media> allMedia = mediaRepository.getAllMedia(id);
@@ -60,6 +60,6 @@ public class EditorServiceImpl implements EditorService {
                 .name(editorId.getName())
                 .username(editorId.getUsername())
                 .build();
-//        return null;
+
     }
 }
