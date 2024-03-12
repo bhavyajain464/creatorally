@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-
 public class EditorServiceImpl implements EditorService {
 
     private final EditorRespository editorRespository;
