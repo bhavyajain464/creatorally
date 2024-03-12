@@ -1,6 +1,7 @@
 package com.creatorally.centralplatform.models.entities;
 
 import com.creatorally.centralplatform.models.enums.MediaType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,4 +25,9 @@ public class Media {
     private Integer creatorId;
     private Enum<MediaType> mediaType;
     private Long scheduledTime;
+    private String title;
+    private String description;
+    private String category;
+    private String keywords;
+    private String privacyStatus;
 }
