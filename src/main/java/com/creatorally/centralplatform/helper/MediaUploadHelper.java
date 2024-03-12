@@ -1,9 +1,5 @@
 package com.creatorally.centralplatform.helper;
 
-import static com.creatorally.centralplatform.constants.CommonConstants.GithubConstants.GITHUB_ACCESS_TOKEN;
-import static com.creatorally.centralplatform.constants.CommonConstants.GithubConstants.GITHUB_REPO;
-import static com.creatorally.centralplatform.constants.CommonConstants.GithubConstants.GITHUB_USERNAME;
-
 import com.creatorally.centralplatform.models.entities.Media;
 import com.creatorally.centralplatform.repository.MediaRepository;
 import java.io.IOException;
@@ -18,6 +14,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.creatorally.centralplatform.constants.CommonConstants.GithubConstants.*;
 
 @Component
 @Slf4j
@@ -35,7 +33,7 @@ public class MediaUploadHelper {
     }
 
     @Async
-    public void uploadMediaToServer(MultipartFile video, Media media) throws IOException {
+    public void uploadMediaToServer(MultipartFile video, Media media, boolean isEdited) throws IOException {
 
         // Read file content
         byte[] fileContent = video.getBytes();
@@ -54,7 +52,11 @@ public class MediaUploadHelper {
         // Check response status
         int statusCode = response.getStatusCode().value();
         if (statusCode == 201) {
-            media.setUneditedUrl(String.format("https://raw.githubusercontent.com/%s/%s/%s/%s", GITHUB_USERNAME, GITHUB_REPO, "main", fileName));
+            if(!isEdited)
+                media.setUneditedUrl(String.format("https://raw.githubusercontent.com/%s/%s/%s/%s/%s", GITHUB_USERNAME, GITHUB_REPO, "main", NON_EDIT_FOLDER, fileName));
+            else
+                media.setEditedUrl(String.format("https://raw.githubusercontent.com/%s/%s/%s/%s/%s", GITHUB_USERNAME, GITHUB_REPO, "main", EDIT_FOLDER, fileName));
+
             mediaRepository.save(media);
             log.info("File uploaded successfully.");
         } else {

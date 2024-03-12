@@ -29,10 +29,14 @@ import java.io.InputStreamReader;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
 
     private final MediaRepository mediaRepository;
@@ -111,7 +115,22 @@ public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
                         .privacyStatus(uploadVideoRequest.getVideoData().getPrivacyStatus())
                         .title(uploadVideoRequest.getVideoData().getTitle())
                 .build());
-        mediaUploadHelper.uploadMediaToServer(uploadVideoRequest.getVideoData().getFile(), media);
+        mediaUploadHelper.uploadMediaToServer(uploadVideoRequest.getVideoData().getFile(), media, false);
+
+    }
+
+    @SneakyThrows
+    public void uploadVideoByEditor(Integer id, UploadVideoRequest uploadVideoRequest) {
+        Optional<Media> optionalMedia = mediaRepository.findById(id);
+        if(optionalMedia.isEmpty()) {
+            log.error("No media exists");
+        }
+
+        Media media = optionalMedia.get();
+        mediaUploadHelper.uploadMediaToServer(uploadVideoRequest.getVideoData().getFile(), media, true);
+
+
+
 
     }
 }
