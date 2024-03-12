@@ -21,5 +21,5 @@ public class Influencer {
     private Integer id;
     private String username;
     private String password;
-    private String access_url;
+    private String accessUrl;
 }
