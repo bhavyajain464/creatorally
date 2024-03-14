@@ -32,7 +32,7 @@ public class JobScheduler {
     }
 
     public Set<String> getJobsScheduledBefore(long scheduledEpochTime) {
-        return jedis.zrangeByScore(SCHEDULED_JOBS_PREFIX, 0, scheduledEpochTime);
+        return jedis.zrangeByScore(SCHEDULED_JOBS_PREFIX, scheduledEpochTime - 5000.0, scheduledEpochTime);
     }
 
     public void addJobs(List<ScheduledJob> scheduledJobs) {
@@ -49,6 +49,7 @@ public class JobScheduler {
         log.info("running jobs: {}",jobs);
         for (String jobId : jobs) {
             youtubeUploadService.publishVideo(jobId);
+            jedis.zrem(SCHEDULED_JOBS_PREFIX, jobId);
         }
     }
 

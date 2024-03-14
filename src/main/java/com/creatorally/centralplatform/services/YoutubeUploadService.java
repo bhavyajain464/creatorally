@@ -8,4 +8,6 @@ public interface YoutubeUploadService {
     void uploadVideo(UploadVideoRequest uploadVideoRequest);
 
     void publishVideo(String mediaId) throws IOException;
+
+    void getCredentials(Integer creatorId);
 }
