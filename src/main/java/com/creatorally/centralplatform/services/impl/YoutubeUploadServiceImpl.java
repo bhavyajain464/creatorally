@@ -4,7 +4,6 @@ import static com.creatorally.centralplatform.models.enums.MediaType.VIDEO;
 
 import com.creatorally.centralplatform.helper.MediaUploadHelper;
 import com.creatorally.centralplatform.models.entities.Media;
-import com.creatorally.centralplatform.models.requests.PublishVideoRequest;
 import com.creatorally.centralplatform.models.requests.UploadVideoRequest;
 import com.creatorally.centralplatform.repository.MediaRepository;
 import com.creatorally.centralplatform.services.YoutubeUploadService;
@@ -30,10 +29,14 @@ import java.io.InputStreamReader;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
 
     private final MediaRepository mediaRepository;
@@ -71,26 +74,27 @@ public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }
 
-    public void publishVideo(PublishVideoRequest publishVideoRequest)
-            throws IOException {
+    public void publishVideo(String mediaId) throws IOException {
+
+        Media media = mediaRepository.findById(Integer.valueOf(mediaId)).orElseThrow(() -> new RuntimeException("Media not found"));
         YouTube youtubeService = getService();
 
         Video video = new Video();
         VideoSnippet snippet = new VideoSnippet();
-        snippet.setTitle(publishVideoRequest.getTitle());
-        snippet.setDescription(publishVideoRequest.getDescription());
-        snippet.setCategoryId(publishVideoRequest.getCategory());
-        snippet.setTags(Arrays.asList(publishVideoRequest.getKeywords().split(",")));
+        snippet.setTitle(media.getTitle());
+        snippet.setDescription(media.getDescription());
+        snippet.setCategoryId(media.getCategory());
+        snippet.setTags(Arrays.asList(media.getKeywords().split(",")));
 
         VideoStatus status = new VideoStatus();
-        status.setPrivacyStatus(publishVideoRequest.getPrivacyStatus());
+        status.setPrivacyStatus(media.getPrivacyStatus());
 
         video.setSnippet(snippet);
         video.setStatus(status);
 
         YouTube.Videos.Insert videoInsert = youtubeService.videos().insert(
                 "snippet,status",video,
-                new FileContent("video/*", new java.io.File(publishVideoRequest.getFile()))
+                new FileContent("video/*", new java.io.File(media.getEditedUrl()))
         );
 
         Video returnedVideo = videoInsert.execute();
@@ -105,8 +109,28 @@ public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
                         .editorId(uploadVideoRequest.getEditorId())
                         .mediaType(VIDEO)
                         .scheduledTime(uploadVideoRequest.getScheduledTime().atZone(ZoneOffset.ofHoursMinutes(5, 30)).toEpochSecond())
+                        .category(uploadVideoRequest.getVideoData().getCategory())
+                        .description(uploadVideoRequest.getVideoData().getDescription())
+                        .keywords(uploadVideoRequest.getVideoData().getKeywords())
+                        .privacyStatus(uploadVideoRequest.getVideoData().getPrivacyStatus())
+                        .title(uploadVideoRequest.getVideoData().getTitle())
                 .build());
-        mediaUploadHelper.uploadMediaToServer(uploadVideoRequest.getVideoData().getFile(), media);
+        mediaUploadHelper.uploadMediaToServer(uploadVideoRequest.getVideoData().getFile(), media, false);
+
+    }
+
+    @SneakyThrows
+    public void uploadVideoByEditor(Integer id, UploadVideoRequest uploadVideoRequest) {
+        Optional<Media> optionalMedia = mediaRepository.findById(id);
+        if(optionalMedia.isEmpty()) {
+            log.error("No media exists");
+        }
+
+        Media media = optionalMedia.get();
+        mediaUploadHelper.uploadMediaToServer(uploadVideoRequest.getVideoData().getFile(), media, true);
+
+
+
 
     }
 }
