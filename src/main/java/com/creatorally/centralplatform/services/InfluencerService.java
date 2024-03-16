@@ -21,6 +21,7 @@ public class InfluencerService {
         Influencer influencer = Influencer.builder().username(createInfluencerRequest.getUsername())
                 .password(createInfluencerRequest.getPassword())
                 .accessUrl(createInfluencerRequest.getAccessUrl())
+                .email(createInfluencerRequest.getEmail())
                 .build();
         Influencer influencerId = influencerRepository.save(influencer);
         log.info("Influencer created successfully");
