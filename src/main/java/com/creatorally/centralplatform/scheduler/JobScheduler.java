@@ -41,7 +41,7 @@ public class JobScheduler {
     }
 
     @SneakyThrows
-    @Scheduled(fixedRate = 1000) // Run every second
+//    @Scheduled(fixedRate = 1000) // Run every second
     public void runJobs() {
 
         long scheduledTime = LocalDateTime.now().atZone(ZoneOffset.ofHoursMinutes(5, 30)).toEpochSecond();

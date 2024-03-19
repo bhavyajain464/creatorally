@@ -1,17 +1,19 @@
 package com.creatorally.centralplatform.controllers;
 
+import com.creatorally.centralplatform.models.entities.Media;
 import com.creatorally.centralplatform.models.requests.CreateInfluencerRequest;
 import com.creatorally.centralplatform.models.requests.UploadVideoRequest;
 import com.creatorally.centralplatform.services.InfluencerService;
 import com.creatorally.centralplatform.services.YoutubeUploadService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
 
 @RestController
+@RequestMapping("/influencer")
 @Slf4j
 public class InfluencerController {
 
@@ -30,17 +32,21 @@ public class InfluencerController {
         return influencerService.createInfluencer(createInfluencerRequest);
     }
 
-    @PostMapping(path = "/uploadVideo")
+    @PostMapping(path = "/api/1.0/uploadVideo")
     public String uploadVideo(@ModelAttribute UploadVideoRequest uploadVideoRequest) {
         youtubeUploadServiceImpl.uploadVideo(uploadVideoRequest);
         return "Video uploaded successfully!";
     }
 
-    @PostMapping(path = "/createCredential")
+    @PostMapping(path = "/api/1.0/createCredential")
     public String createCredential(@RequestParam Integer creatorId) {
         youtubeUploadServiceImpl.getCredentials(creatorId);
         return "Video uploaded successfully!";
     }
 
+    @GetMapping(path = "/api/1.0/media/{id}")
+    public List<Media> getMediaByCreatorId(@PathVariable(name="id") @Validated Integer id) {
+        return influencerService.getAllMediaByCreatorId(id);
+    }
 
 }

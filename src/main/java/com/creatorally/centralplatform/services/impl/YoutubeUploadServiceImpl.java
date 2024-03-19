@@ -53,7 +53,7 @@ public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Arrays.asList(YouTubeScopes.YOUTUBE_UPLOAD);
     private static final String CLIENT_SECRETS_FILE = "src/main/resources/client_secrets.json";
-    private static final String CREDENTIALS_DIRECTORY = "/Users/bhavyajain/Downloads/oauth-credentials";
+    private static final String CREDENTIALS_DIRECTORY = "C:\\Users\\Dell\\OneDrive\\Desktop\\To-new-beginnings\\oauth-credentials";
 
     public YoutubeUploadServiceImpl(MediaRepository mediaRepository, InfluencerRepository influencerRepository, MediaUploadHelper mediaUploadHelper, MailHelper mailHelper) {
         this.mediaRepository = mediaRepository;
@@ -76,6 +76,7 @@ public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
 
         authorize(creatorId.toString());
     }
+
 
     private void sendEmailToUserToCreateCredentials(Integer creatorId, String link) {
         Optional<Influencer> creatorOp = influencerRepository.findById(creatorId);
@@ -178,7 +179,7 @@ public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
         Credential credential = flow.loadCredential(userId);
         if (credential == null || credential.getRefreshToken() == null && credential.getExpiresInSeconds() <= 60L) {
             String redirectUri = receiver.getRedirectUri();
-            AuthorizationCodeRequestUrl authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri);
+            AuthorizationCodeRequestUrl authorizationUrl = flow.newAuthorizationUrl().setRedirectUri("http://localhost:8081/oauth2callback");
             sendEmailToUserToCreateCredentials(Integer.valueOf(userId), authorizationUrl.build());
             browse(authorizationUrl.build());
             String code = receiver.waitForCode();
@@ -187,5 +188,19 @@ public class YoutubeUploadServiceImpl  implements YoutubeUploadService {
         }
     }
 
+    @Override
+    @SneakyThrows
+    public Media verifyMedia(Integer mediaId, Integer creatorId) {
+        Optional<Media> mediaOp = mediaRepository.getMediaById(mediaId);
+        if(mediaOp.isEmpty()){
+            throw new Exception("chaunk gye bhaiya?");
+        }
+        Media media = mediaOp.get();
+        if(!Objects.equals(creatorId, mediaOp.get().getCreatorId())){
+            throw new Exception("invalid media");
+        }
+        media.setIsVerified(true);
+        return mediaRepository.save(media);
+    }
 
 }

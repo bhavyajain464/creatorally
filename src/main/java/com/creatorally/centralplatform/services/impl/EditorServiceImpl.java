@@ -42,7 +42,7 @@ public class EditorServiceImpl implements EditorService {
             throw new Exception("No Editor exists");
         }
         Editor editor = editorOp.get();
-        List<Media> allMedia = mediaRepository.getAllMedia(id);
+        List<Media> allMedia = mediaRepository.getAllMediaByEditor(id);
 
         return GetEditorResponse.builder().name(editor.getName()).username(editor.getUsername()).media(allMedia).id(editor.getId()).build();
     }
