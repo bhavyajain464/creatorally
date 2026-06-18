@@ -17,6 +17,6 @@ public class CreateInfluencerRequest {
     private String username;
     private String password;
     private String accessUrl;  // Need to take this using google api, need to check
-
+    private String email;
 
 }
